@@ -4,7 +4,6 @@ require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 class IPTVDesinstalacao{
 
-
   public static function esconder_warnings(){
     global $iptv;
     $wpdb->query('SET sql_notes = 0;');
@@ -44,8 +43,8 @@ class IPTVDesinstalacao{
 
   public function get_schemas($tabela_name){
     global $wpdb;
-
-    $tabelas = "DROP TABLE IF EXISTS {$this->get_pref_tables_names()[$tabela_name]};" ;
+    $tabelas = '';
+    $tabelas = "DROP TABLE IF EXISTS {$this->get_pref_tables_names()[$tabela_name]}; ";
 
     return $tabelas;
 
@@ -56,11 +55,12 @@ class IPTVDesinstalacao{
 
     if(!$tabelas)
       $tabelas = $this->get_simp_tables_names();
+
     $querys = '';
     foreach($tabelas as $tabela){
       if(!$wpdb->query($this->get_schemas($tabela)))
         wp_die('Erro ao deletar tabela: ' . $tabela);
-      //$querys .= $this->get_schemas($tabela)."<br>";
+      //$querys .= "<br>" . $this->get_schemas($tabela)."<br>";
     }
     //die($querys);
   }

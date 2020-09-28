@@ -2,7 +2,6 @@
 
 function iptv_default_rel_page_display(){
   ?>
-  <link rel='stylesheets' href='{}';>
   <div class='wrap'>
     <h1 class='wp-heading-inline'>Relatórios IPTV</h1>
     <hr class='wp-head-end'>

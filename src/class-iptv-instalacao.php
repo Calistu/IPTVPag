@@ -35,7 +35,13 @@ class IPTVInstalacao{
 
       'clientes' => "CREATE TABLE IF NOT EXISTS {$iptv->prefix}clientes(
           id int primary key auto_increment,
-          nome varchar(300) not null);",
+          nome varchar(300) not null default ' ',
+          usuario varchar(300) not null default ' ',
+          senha varchar(300) not null default ' ',
+          whatsapp varchar(20) not null default ' ',
+          criacao datetime not null default now(),
+          expiracao datetime not null default now(),
+          vlr_mensal float default 0);",
 
       'pagamentos' => "CREATE TABLE IF NOT EXISTS {$iptv->prefix}pagamentos(
           id int primary key auto_increment,
@@ -54,7 +60,7 @@ class IPTVInstalacao{
     foreach($tabelas as $tabela){
       if(!$wpdb->query($this->get_schemas($tabela)))
         wp_die('Erro ao criar tabela: ' . $tabela);
-      //$querys .= $this->get_schemas($tabela);
+      //$querys .= "<br>" . $this->get_schemas($tabela) . "<br>";
     }
     //die($querys);
   }
