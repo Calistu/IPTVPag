@@ -6,6 +6,9 @@ if(!class_exists('WP_List_Table')){
 }
 
 class IPTVClientesList extends WP_List_Table{
+
+  public $link = '?page=iptv-rel-tools';
+
   public function prepare_items(){
 
     $columns = $this->get_columns();
@@ -82,6 +85,17 @@ class IPTVClientesList extends WP_List_Table{
     return "<input type='checkbox'>";
   }
 
+  public function delete_clientes($id){
+    if( !$wpdb->delete( $iptv->prefix . $cliente->table, array('id' => $id) )){
+      $cliente->PrintErro('Não houve itens deletados');
+      if($wpdb->show_errors()){
+        $cliente->PrintErro($wpdb->print_error());
+      }
+    }else{
+      $cliente->status_cadastrar();
+      $cliente->PrintOk("Cliente deletado com sucesso");
+    }
+  }
 
   function column_nome($item)
   {
@@ -139,12 +153,13 @@ Enviar comprovante após efetuar o pagamento, liberação instantânea.";
 
       $cliente->processar_mensagem();
 
-      //add_thickbox();
       $link = 'https://api.whatsapp.com/send?phone=' . $item['whatsapp'] . '&' .'text=' . $cliente->msg;
 
+      //add_thickbox();
+
       $actions = array(
-          'edit' => sprintf("<a href={$cliente->formfile}&alterar=%s>%s</a>", $item['id'], __('Editar', 'iptv')),
-          'delete' => sprintf("<a href={$cliente->formfile}&deletar=%s>%s</a> ", $item['id'], __('Deletar', 'iptv')),
+          'edit' => sprintf("<a class='thickbox' href='{$cliente->formfile}&alterar=%s'>%s</a>", $item['id'], __('Editar', 'iptv')),
+          'delete' => sprintf("<a href='{$this->link}&deletar=%s'>%s</a> ", $item['id'], __('Deletar', 'iptv')),
           'message' =>
           sprintf("<a id='link-id{$item['id']}' href='$link' target='_blank'>%s</a>",
            __('Msg', 'iptv')),
@@ -170,7 +185,7 @@ Enviar comprovante após efetuar o pagamento, liberação instantânea.";
       case 'expiracao':
         return $item[ $column_name ];
       case 'vlr_mensal':
-        return 'R$ ' . $item[$column_name];
+        return 'R$ ' . number_format(floatval($item[$column_name]),2);
 
       default:
           return print_r( $item, true ) ;

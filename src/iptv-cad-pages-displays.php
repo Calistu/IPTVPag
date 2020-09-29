@@ -14,9 +14,60 @@ function iptv_default_cad_page_display(){
   <?php
 }
 
+function iptv_msgs_cad_page_display(){
+  ?>
+  <div class='wrap'>
+     <h1 class='wp-heading-inline'>Mensagens</h1>
+     <hr class='wp-head-end'>
+     <tbody>
+      <?php
+      $mensagens = new IPTVMsgs();
+      echo "<form id='form' method='POST' action='{$mensagens->formfile}' >";
+      ?>
+      <table class="form-table">
+        <div class="meta-box-sortables">
+          <tr>
+            <th>
+              <Label>Nome</Label>
+            </th>
+          </tr>
+          <tr>
+            <td>
+              <input name='nome' type='text' class='regular_text'>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            <textarea cols='20' rows='4'>
+
+            </textarea>
+            </td>
+          </tr>
+          <?php
+          $TiposMsgs = new IPTVElems();
+          $TiposMsgs->table = 'tipos_msgs';
+          $TiposMsgs->getList();
+          ?>
+          <tr>
+            <td>
+          <?php $TiposMsgs->displayOptions(); ?>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input name='submit' type='submit' class='wp-core-ui button' value='confirmar'>
+            </td>
+          </tr>
+        </div>
+      </table>
+    </form>
+    </tbody>
+  </div>
+      <?php
+}
+
 function iptv_clientes_cad_page_display(){
   ?>
-
     <div class='wrap'>
      <h1 class='wp-heading-inline'>Clientes</h1>
      <hr class='wp-head-end'>
@@ -88,6 +139,10 @@ function iptv_clientes_cad_page_display(){
       }else
       if(isset($_REQUEST['atualizar'])){
         $cliente->id = $_REQUEST['atualizar'];
+
+        $cli_lista = new IPTVCliente();
+        $cliente->formfile = $cli_lista->link;
+
         $cliente->formatar_data();
         $cliente->guardar_req_inputs();
         $cliente->validar_preenchimento();
@@ -100,22 +155,6 @@ function iptv_clientes_cad_page_display(){
             }
           }else{
             $cliente->PrintOk("Cliente atualizado com sucesso");
-          }
-        }else{
-          $cliente->PrintErro('Não foi informado id da alteração');
-        }
-      }else
-      if(isset($_REQUEST['deletar'])){
-        $cliente->id = $_REQUEST['deletar'];
-        if($cliente->id){
-          if( !$wpdb->delete( $iptv->prefix . $cliente->table, array('id' => $cliente->id) )){
-            $cliente->PrintErro('Não houve itens deletados');
-            if($wpdb->show_errors()){
-              $cliente->PrintErro($wpdb->print_error());
-            }
-          }else{
-            $cliente->status_cadastrar();
-            $cliente->PrintOk("Cliente deletado com sucesso");
           }
         }else{
           $cliente->PrintErro('Não foi informado id da alteração');
@@ -179,7 +218,8 @@ function iptv_clientes_cad_page_display(){
           'name' => 'vlr_mensal',
           'tipo' => 'number',
           'valor' =>  $cliente->campos['vlr_mensal'],
-          'classe' => 'small-text'
+          'classe' => 'small-text',
+          'step' => "any"
         ),
 
         '7' => array(

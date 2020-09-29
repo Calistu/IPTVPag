@@ -104,6 +104,7 @@ class IPTVElems{
       <table class="form-table">
         <div class="meta-box-sortables">
         <?php
+
         foreach ($this->form as $i => $form) {
 
           if(!isset($form['name']))
@@ -124,10 +125,13 @@ class IPTVElems{
           if(!isset($form['pattern']))
             $form['pattern'] = '';
 
+          if(!isset($form['step']))
+            $form['step'] = '';
+
           echo "
             <tr>
               <th valign='top' scope='row'><label>{$form['descr']}</label></th>
-              <td><input type='{$form['tipo']}' class='{$form['classe']}' id='{$form['descr']}' name='{$form['name']}' value='{$form['valor']}'></td>
+              <td><input type='{$form['tipo']}' class='{$form['classe']}' id='{$form['descr']}' step='{$form['step']}' name='{$form['name']}' value='{$form['valor']}'></td>
             </tr>
           ";
         }

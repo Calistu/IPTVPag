@@ -18,7 +18,9 @@ class IPTVDesinstalacao{
     $tabelas = array(
       "iptv",
       "clientes",
-      "pagamentos"
+      "pagamentos",
+      "mensagens",
+      "tipos_msgs"
       );
     return $tabelas;
   }
@@ -28,7 +30,9 @@ class IPTVDesinstalacao{
     $tabelas = array(
       'iptv' => "{$iptv->prefix}iptv",
       'clientes' => "{$iptv->prefix}clientes",
-      'pagamentos' => "{$iptv->prefix}pagamentos"
+      'pagamentos' => "{$iptv->prefix}pagamentos",
+      'mensagens' => "{$iptv->prefix}mensagens",
+      'tipos_msgs' => "{$iptv->prefix}tipos_msgs"
     );
 
     $tabela = $this->get_simp_tables_names();

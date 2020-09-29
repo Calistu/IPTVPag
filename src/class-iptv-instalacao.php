@@ -5,7 +5,9 @@ class IPTVInstalacao{
     $tabelas = array(
       "iptv",
       "clientes",
-      "pagamentos"
+      "pagamentos",
+      "tipos_msgs",
+      "mensagens"
       );
     return $tabelas;
   }
@@ -43,10 +45,20 @@ class IPTVInstalacao{
           expiracao datetime not null default now(),
           vlr_mensal float default 0);",
 
+      'tipos_msgs' => "CREATE TABLE {$iptv->prefix}tipos_msgs(
+        id int primary key auto_increment,
+        nome varchar(50) not null default '');",
+
+      'mensagens' => "CREATE TABLE {$iptv->prefix}mensagens(
+        id int primary key auto_increment,
+        nome varchar(50) not null default '',
+        tipos_msgs int default not null,
+        conteúdo longtext not null default '',
+        foreign key(tipos_msgs) references tipos_msgs(id));",
+
       'pagamentos' => "CREATE TABLE IF NOT EXISTS {$iptv->prefix}pagamentos(
           id int primary key auto_increment,
-          nome varchar(300) not null);"
-        );
+          nome varchar(300) not null);");
 
     return $tabelas[$tabela_name];
 
@@ -59,7 +71,8 @@ class IPTVInstalacao{
     $querys = '';
     foreach($tabelas as $tabela){
       if(!$wpdb->query($this->get_schemas($tabela)))
-        wp_die('Erro ao criar tabela: ' . $tabela);
+        if($wpdb->print_error())
+          wp_die('Erro ao criar tabela: ' . $tabela . $wpdb->print_error());
       //$querys .= "<br>" . $this->get_schemas($tabela) . "<br>";
     }
     //die($querys);

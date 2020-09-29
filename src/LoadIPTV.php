@@ -14,6 +14,9 @@ require_once __DIR__ . '/class-iptv-elems.php';
 require_once __DIR__ . '/class-iptv-pagamentos.php';
 require_once __DIR__ . '/class-iptv-pagamentos-list.php';
 
+require_once __DIR__ . '/class-iptv-msgs.php';
+//require_once __DIR__ . '/class-iptv-mensagens-list.php';
+
 require_once __DIR__ . '/class-iptv-clientes.php';
 require_once __DIR__ . '/class-iptv-clientes-list.php';
 
