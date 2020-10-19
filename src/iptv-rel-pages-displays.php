@@ -25,10 +25,14 @@ function iptv_clientes_rel_page_display(){
     $cliente = new IPTVCliente();
     global $wpdb;
     global $iptv;
+    $action = null;
 
-    if(isset($_REQUEST['deletar'])){
-      $cliente->id = $_REQUEST['deletar'];
-      if($cliente->id){
+    if(isset($_REQUEST['action']))
+      $action = $_REQUEST['action'];
+
+    if($action==='deletar'){
+      if(isset($_REQUEST['id'])){
+        $cliente->id = $_REQUEST['id'];
         if( !$wpdb->delete( $iptv->prefix . $cliente->table, array('id' => $cliente->id) )){
           $cliente->PrintErro('Não houve itens deletados');
           if($wpdb->show_errors()){
@@ -42,6 +46,7 @@ function iptv_clientes_rel_page_display(){
         $cliente->PrintErro('Não foi informado id da alteração');
       }
     }
+
     /*==========================================================================*/
 
     /*---------------------------------------------------------------*/
@@ -52,7 +57,6 @@ function iptv_clientes_rel_page_display(){
     ?>
   </div>
   <?php
-
 }
 
 function iptv_pagamentos_rel_page_display(){

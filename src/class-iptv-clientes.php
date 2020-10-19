@@ -12,6 +12,25 @@ class IPTVCliente extends IPTVElems{
   public $msg_text = '';
   public $msg = '';
 
+  public function receber_mensagens($args=''){
+
+    if($args){
+      $where = 'where tipos_msgs = ' . $args . ' and m.user_id = ' . get_current_user_id();
+    }else{
+      $where = 'where m.user_id = ' . get_current_user_id();
+    }
+
+    global $wpdb, $iptv;
+    $res = $wpdb->get_results("SELECT m.id, tipos_msgs, nome, conteudo FROM {$iptv->prefix}mensagens as m inner join {$iptv->prefix}tipos_msgs as t on t.id = m.tipos_msgs {$where}", ARRAY_A);
+    return $res;
+  }
+
+  public function get_clientes(){
+    global $wpdb, $iptv;
+    $data = $wpdb->get_results("SELECT id, nome, usuario, whatsapp, senha, DATE_FORMAT(criacao,'%d/%m/%Y'), DATE_FORMAT(expiracao,'%d/%m/%Y'), vlr_mensal FROM {$iptv->prefix}clientes where user_id = " . get_current_user_id() , ARRAY_A);
+    return $data;
+  }
+
   public function processar_mensagem(){
     $this->msg = urlencode($this->msg_text);
     $this->msg  = str_replace('%','%%',$this->msg);

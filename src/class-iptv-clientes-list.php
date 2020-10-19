@@ -14,20 +14,24 @@ class IPTVClientesList extends WP_List_Table{
     $columns = $this->get_columns();
     $hidden = $this->get_hidden_columns();
     $sortable = $this->get_sortable_columns();
-
     $data = $this->table_data();
-    usort( $data, array( &$this, 'sort_data' ) );
+    $this->_column_headers = array($columns, $hidden, $sortable);
     $currentPage = $this->get_pagenum();
     $perPage = 100;
-    $totalItems = sizeof($data);
 
-    $this->set_pagination_args( array(
+    if($data){
+      usort( $data, array( &$this, 'sort_data' ) );
+
+      $data = array_slice($data,(($currentPage-1)*$perPage),$perPage);
+      $totalItems = sizeof($data);
+      $this->items = $data;
+
+      $this->set_pagination_args( array(
         'total_items' => $totalItems,
         'per_page'    => $perPage
-    ) );
-    $data = array_slice($data,(($currentPage-1)*$perPage),$perPage);
-    $this->_column_headers = array($columns, $hidden, $sortable);
-    $this->items = $data;
+      ) );
+    }
+
   }
 
   public function get_columns(){
@@ -62,7 +66,11 @@ class IPTVClientesList extends WP_List_Table{
   private function table_data(){
     global $wpdb;
     global $iptv;
-    $data = $wpdb->get_results("SELECT id, nome, usuario, whatsapp, senha, DATE_FORMAT(criacao,'%d/%m/%Y'), DATE_FORMAT(expiracao,'%d/%m/%Y'), vlr_mensal FROM {$iptv->prefix}clientes;", ARRAY_A);
+    $cliente  = new IPTVCliente();
+    $data = $cliente->get_clientes();
+    if(!$data){
+      return $data;
+    }
 
     foreach($data as &$val){
         $val['criacao'] = $val["DATE_FORMAT(criacao,'%d/%m/%Y')"];
@@ -86,7 +94,7 @@ class IPTVClientesList extends WP_List_Table{
   }
 
   public function delete_clientes($id){
-    if( !$wpdb->delete( $iptv->prefix . $cliente->table, array('id' => $id) )){
+    if( !$wpdb->delete( $iptv->prefix . $cliente->table, array('id' => $id, 'user_id' => get_current_user_id()) )){
       $cliente->PrintErro('Não houve itens deletados');
       if($wpdb->show_errors()){
         $cliente->PrintErro($wpdb->print_error());
@@ -101,69 +109,37 @@ class IPTVClientesList extends WP_List_Table{
   {
 
       $cliente = new IPTVCliente();
-      $cliente->msg_text = "🚨🚨 Aviso de Vencimento🚨🚨
 
-Prezado(a) *[cliente]*
+      $msg = $cliente->receber_mensagens();
 
-Viemos por meio desta apenas para lembrar-lhe a data do vencimento da sua assinatura dos canais de TV, com vencimento em *[expiracao]*.
-
-Caso o pagamento já tenha sido efetuado, por favor, nos enviar o comprovante e desconsiderar este aviso.
-
-*Valor do Plano - R$ [vlr_mensal]*
-
-19BR - Departamento de Cobrança
-
-*FORMAS DE PAGAMENTO:*   🛒💳
-
-1⃣ *CARTÃO DE CRÉDITO*
-Via aplicativo online
-
-2⃣ *ITAÚ*
-Código banco: 341
-Agência: 1370 - Conta: 08325-3
-Conta Corrente - Nome: Leandro Silva Azevedo
-
-3⃣ *BRADESCO*
-Agência: 2387 - Conta: 16912-9
-Conta corrente - Giovane Lucena da Silva
-
-4⃣ *NUBANK*
-Banco: 260 Nu Pagamentos
-Agencia: 0001 - Conta: 6784496-2
-Nome: Leandro Azevedo
-
-5⃣ *CAIXA*
-Código banco: 104
-Agência: 4226 - Operação: 013
-Conta: 14526-4 - Conta poupança
-Nome: Daniela Cristina Silva Azevedo
-O depósito pode ser feito diretamente na lotérica
-
-*TRANSFERÊNCIA BANCÁRIA INFORMAR SEU NOME NA IDENTIFICAÇÃO*
-
-6⃣ *BOLETO*
-
-Transferência online (realizar o TED)
-Depósito bancário (NA BOCA DO CAIXA)
-Enviar comprovante após efetuar o pagamento, liberação instantânea.";
-
-      $cliente->msg_text  = str_replace('[cliente]',$item['nome'],$cliente->msg_text);
-      $cliente->msg_text  = str_replace('[vlr_mensal]',number_format(floatval($item['vlr_mensal']),2),$cliente->msg_text);
-      $cliente->msg_text  = str_replace('[expiracao]',$item['expiracao'],$cliente->msg_text);
-
-      $cliente->processar_mensagem();
-
-      $link = 'https://api.whatsapp.com/send?phone=' . $item['whatsapp'] . '&' .'text=' . $cliente->msg;
-
+      if(!count($msg)){
+        $cliente->msg_text = 'Sem mensagens';
+      }
       //add_thickbox();
 
-      $actions = array(
-          'edit' => sprintf("<a class='thickbox' href='{$cliente->formfile}&alterar=%s'>%s</a>", $item['id'], __('Editar', 'iptv')),
-          'delete' => sprintf("<a href='{$this->link}&deletar=%s'>%s</a> ", $item['id'], __('Deletar', 'iptv')),
-          'message' =>
-          sprintf("<a id='link-id{$item['id']}' href='$link' target='_blank'>%s</a>",
-           __('Msg', 'iptv')),
-         );
+      $actions['edit'] = sprintf("<a class='thickbox' href='{$cliente->formfile}&action=alterar&id=%s'>%s</a>", $item['id'], __('Editar', 'iptv'));
+      $actions['delete'] = sprintf("<a href='{$this->link}&action=deletar&id=%s'>%s</a> ", $item['id'], __('Deletar', 'iptv'));
+
+      foreach ($msg as $key => $value) {
+
+        $cliente->msg_text = $value['conteudo'];
+
+        $cliente->msg_text  = str_replace('[cliente]',$item['nome'],$cliente->msg_text);
+        $cliente->msg_text  = str_replace('[vlr_mensal]',number_format(floatval($item['vlr_mensal']),2),$cliente->msg_text);
+        $cliente->msg_text  = str_replace('[expiracao]',$item['expiracao'],$cliente->msg_text);
+
+        $cliente->processar_mensagem();
+
+        $link = 'https://api.whatsapp.com/send?phone=' . $item['whatsapp'] . '&' .'text=' . $cliente->msg;
+
+        $pula_linha = '';
+        if(strlen($value['nome'])>=10){
+          $pula_linha = '<br>';
+        }
+
+        $actions[ $value['nome'] ] = sprintf("{$pula_linha}<a id='link-id{$item['id']}' href='$link' target='_blank'>%s</a>",__($value['nome'], 'iptv'));
+
+      }
 
       return sprintf('%s %s',
           $item['nome'],

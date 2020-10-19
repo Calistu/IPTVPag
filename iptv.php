@@ -2,7 +2,7 @@
 
 /*Plugin Name: IPTV PAGs
  * Description: Plugin Wordpress para integração com a plataformas IPTV
- * Version: 1.0
+ * Version: 1.0.0.1
  * License: GPLv2 or Later.
 */
 

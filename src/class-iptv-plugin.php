@@ -33,13 +33,14 @@ Class IPTVPlugin{
 }
 
 function iptv_registrar_cadastros(){
-  add_menu_page('Pagamentos', 'Cadastros', 'read', 'iptv-cad-tools', 'iptv_clientes_cad_page_display', 'dashicons-table-col-after', 30);
-  add_submenu_page('iptv-cad-tools', 'Mensagens', 'Mensagens', 'read', 'iptv-cad-msgs', 'iptv_msgs_cad_page_display');
+  add_menu_page('WhatsPanel', 'Cadastros', 'read', 'iptv-cad-tools', 'iptv_default_cad_page_display', 'dashicons-table-col-after', 30);
   add_submenu_page('iptv-cad-tools', 'Clientes', 'Clientes', 'read', 'iptv-cad-clientes', 'iptv_clientes_cad_page_display');
+  add_submenu_page('iptv-cad-tools', 'Mensagens', 'Mensagens', 'read', 'iptv-cad-msgs', 'iptv_msgs_cad_page_display');
+  add_submenu_page('iptv-cad-tools', 'Importação', 'Importação', 'read', 'iptv-cad-import', 'iptv_imprt_cad_page_display');
 }
 
 function iptv_registrar_relatorios(){
-  add_menu_page('Pagamentos', 'Lista Clientes', 'read', 'iptv-rel-tools', 'iptv_clientes_rel_page_display', 'dashicons-media-text', 30);
+  add_menu_page('WhatsPanel', 'Lista Clientes', 'read', 'iptv-rel-tools', 'iptv_clientes_rel_page_display', 'dashicons-media-text', 30);
   add_submenu_page('iptv-rel-tools', 'Clientes', 'Clientes', 'read', 'iptv-rel-clientes', 'iptv_clientes_rel_page_display');
 }
 

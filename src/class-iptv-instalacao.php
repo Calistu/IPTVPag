@@ -3,9 +3,7 @@
 class IPTVInstalacao{
   public static function get_simp_tables_names(){
     $tabelas = array(
-      "iptv",
       "clientes",
-      "pagamentos",
       "tipos_msgs",
       "mensagens"
       );
@@ -31,10 +29,6 @@ class IPTVInstalacao{
     global $iptv;
     $tabelas = array(
 
-      'iptv' => "CREATE TABLE IF NOT EXISTS {$iptv->prefix}iptv(
-        id int primary key auto_increment,
-        nome varchar(300) not null);",
-
       'clientes' => "CREATE TABLE IF NOT EXISTS {$iptv->prefix}clientes(
           id int primary key auto_increment,
           nome varchar(300) not null default ' ',
@@ -43,23 +37,21 @@ class IPTVInstalacao{
           whatsapp varchar(20) not null default ' ',
           criacao datetime not null default now(),
           expiracao datetime not null default now(),
-          vlr_mensal float default 0);",
+          vlr_mensal float default 0,
+          user_id int);",
 
       'tipos_msgs' => "CREATE TABLE {$iptv->prefix}tipos_msgs(
         id int primary key auto_increment,
-        nome varchar(50) not null default '');",
+        nome varchar(50) not null default '',
+        user_id int);",
 
       'mensagens' => "CREATE TABLE {$iptv->prefix}mensagens(
         id int primary key auto_increment,
-        nome varchar(50) not null default '',
-        tipos_msgs int default not null,
-        conteúdo longtext not null default '',
-        foreign key(tipos_msgs) references tipos_msgs(id));",
-
-      'pagamentos' => "CREATE TABLE IF NOT EXISTS {$iptv->prefix}pagamentos(
-          id int primary key auto_increment,
-          nome varchar(300) not null);");
-
+        tipos_msgs int not null,
+        conteudo longtext not null default '',
+        user_id int,
+        foreign key(tipos_msgs) references {$iptv->prefix}tipos_msgs(id));"
+      );
     return $tabelas[$tabela_name];
 
   }
@@ -73,9 +65,9 @@ class IPTVInstalacao{
       if(!$wpdb->query($this->get_schemas($tabela)))
         if($wpdb->print_error())
           wp_die('Erro ao criar tabela: ' . $tabela . $wpdb->print_error());
-      //$querys .= "<br>" . $this->get_schemas($tabela) . "<br>";
+//      $querys .= "<br>" . $this->get_schemas($tabela) . "<br>";
     }
-    //die($querys);
+//    die($querys);
   }
 
   public function instalar(){

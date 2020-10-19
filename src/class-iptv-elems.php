@@ -25,23 +25,23 @@ class IPTVElems{
 
   public function status_cadastrar(){
     $form_stat = STATUS_CADASTRANDO;
-    $this->formfile = $this->formfile_zstat . '&cadastrar';
+    $this->formfile = $this->formfile_zstat . '&action=cadastrar';
   }
 
   public function status_alterar($id){
     $this->form_stat = STATUS_ALTERANDO;
-    $this->formfile = $this->formfile_zstat . '&alterar=' . $this->id;
+    $this->formfile = $this->formfile_zstat . '&action=alterar&id=' . $this->id;
   }
 
   public function status_atualizar(){
     $this->form_stat = STATUS_ATUALIZANDO;
-    $this->formfile = $this->formfile_zstat . '&atualizar=' . $this->id;;
+    $this->formfile = $this->formfile_zstat . '&action=atualizar&id=' . $this->id;;
   }
 
   public function status_deletar($id){
     $this->form_stat = STATUS_DELETANDO;
     query_posts( array( 'cat' => 9993, 'showposts' => 1) );
-    $this->formfile = $this->formfile_zstat . '&deletar=' . $this->id;
+    $this->formfile = $this->formfile_zstat . '&action=deletar&id=' . $this->id;
   }
 
   public function status_cancelar($msg){
@@ -65,10 +65,10 @@ class IPTVElems{
   }
 
   //mensagem personalizada sem status
-  function Print($msg) {
+  function Notif($msg) {
       ?>
       <div class="notice">
-          <p><?php _e( $msg, 'kidspay' ); ?></p>
+          <p><?php _e( $msg, 'iptv_pag' ); ?></p>
       </div>
       <?php
   }
@@ -77,7 +77,7 @@ class IPTVElems{
   function PrintOk($msg) {
       ?>
       <div class="notice notice-success is-dismissible">
-          <p><?php _e( $msg, 'kidspay' ); ?></p>
+          <p><?php _e( $msg, 'iptv_pag' ); ?></p>
       </div>
       <?php
   }
@@ -88,7 +88,7 @@ class IPTVElems{
      <div class="notice error my-acf-notice is-dismissible" >
         <p>
           <?php
-            _e( $msg , 'kidspay' );
+            _e( $msg , 'iptv_pag' );
             $this->erro = 1;
           ?>
         </p>

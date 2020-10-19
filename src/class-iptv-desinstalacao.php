@@ -16,9 +16,7 @@ class IPTVDesinstalacao{
 
   public static function get_simp_tables_names(){
     $tabelas = array(
-      "iptv",
       "clientes",
-      "pagamentos",
       "mensagens",
       "tipos_msgs"
       );
@@ -28,9 +26,7 @@ class IPTVDesinstalacao{
   public function get_pref_tables_names(){
     global $iptv;
     $tabelas = array(
-      'iptv' => "{$iptv->prefix}iptv",
       'clientes' => "{$iptv->prefix}clientes",
-      'pagamentos' => "{$iptv->prefix}pagamentos",
       'mensagens' => "{$iptv->prefix}mensagens",
       'tipos_msgs' => "{$iptv->prefix}tipos_msgs"
     );
